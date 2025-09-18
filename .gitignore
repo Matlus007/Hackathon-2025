@@ -1,0 +1,107 @@
+# C# / .NET
+[Bb]in/
+[Oo]bj/
+# ASP.NET
+wwwroot/dist/
+Properties/launchSettings.json
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.tracestate.json
+*.cache
+*.trn
+*.tlog
+
+# Rider
+.idea/
+
+# User-specific files
+*.dbmdl
+*.jfm
+*_i.c
+*_p.c
+*.ncb
+*.orig
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.pubxml
+*.ruleset
+*.sbr
+*.sdf
+*.tlb
+*.tlh
+*.tmp
+*.tmp_proj
+*.vsp
+*.vssscc
+*.vspscc
+*.vssscc
+*.vssettings
+*.vspx
+*.log
+*.mdf
+*.ldf
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]uild/
+[Bb]uilds/
+[Aa]rtifacts/
+[Aa]rtifacts/
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]esults/
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# Uncomment if you want to prevent NuGet packages from being checked in.
+# /packages/
+
+# Dotnet Core
+project.lock.json
+project.fragment.lock.json
+project.razor.json
+
+# Environment files
+.env
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Profiler
+*.pstat
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Secrets
+secrets.json
+appsettings.json
+appsettings.Development.json
+
+# Other
+*.zip
+*.bak
+
+# Mac / Linux
+.DS_Store
+Thumbs.db
