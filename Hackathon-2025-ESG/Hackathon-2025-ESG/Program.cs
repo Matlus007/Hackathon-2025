@@ -1,4 +1,13 @@
+using Hackathon_2025_ESG.Areas.Identity.Data;
+using Hackathon_2025_ESG.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("Hackathon_2025_ESGContextConnection") ?? throw new InvalidOperationException("Connection string 'Hackathon_2025_ESGContextConnection' not found.");;
+
+builder.Services.AddDbContext<Hackathon_2025_ESGContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddDefaultIdentity<Hackathon_2025_ESGUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<Hackathon_2025_ESGContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
