@@ -7,17 +7,23 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/loader.css" asp-append-version="true" />
     @* <link rel="stylesheet" href="~/Hackathon_2025_ESG.styles.css" asp-append-version="true" /> *@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
+
+    <div id="loaderOverlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
     <div id="app-content">
         <div id="main">
             <div class="header">
                 <nav class="navbar landing-nav navbar-expand-lg bg-white shadow-sm">
                     <div class="container-fluid">
                         <!-- Brand Logo -->
-                        <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                        <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index" onclick="showLoader()">
                             <i class="bi bi-rocket-takeoff me-2"></i>
                             <span>RocketESG</span>
                         </a>
@@ -71,6 +77,19 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        function showLoader() {
+            $('#loaderOverlay').fadeIn('1000');
+            $('#app-content').addClass('blur-disabled');
+        }
+
+        function hideLoader() {
+            $('#loaderOverlay').fadeOut('1000');
+            $('#app-content').removeClass('blur-disabled');
+        }
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
