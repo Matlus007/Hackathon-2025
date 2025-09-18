@@ -1,5 +1,8 @@
+using Amazon.S3;
 using Hackathon_2025_ESG.Areas.Identity.Data;
 using Hackathon_2025_ESG.Data;
+using Hackathon_2025_ESG.Services;
+using Hackathon_2025_ESG.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +14,15 @@ builder.Services.AddDefaultIdentity<Hackathon_2025_ESGUser>(options => options.S
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
+builder.Services.AddHttpContextAccessor();
+
+// Register the IAmazonS3 client
+builder.Services.AddAWSService<IAmazonS3>();
+
+// Register custom uploader service
+builder.Services.AddScoped<IAwsS3UploaderService, AwsS3UploaderService>();
 
 var app = builder.Build();
 

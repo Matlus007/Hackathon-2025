@@ -42,6 +42,12 @@
                                     </a>
                                 </li>
 
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="Client" asp-controller="UploadDocs" asp-action="Index" onclick="showLoader()">
+                                        <i class="bi bi-house-door me-1"></i> Upload Docs
+                                    </a>
+                                </li>
+
                                 @* @if (User.IsInRole("UR001")) // Admin
                                 {
                                     <partial name="_AdminNavItems" />
