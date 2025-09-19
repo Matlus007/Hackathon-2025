@@ -1,6 +1,8 @@
 ﻿@model Hackathon_2025_ESG.Areas.Client.Models.EsgAnalysisViewModel
+
 @{
     ViewData["Title"] = "AI ESG Analytics";
+    Layout = "_Layout";
 }
 
 <link rel="stylesheet" href="~/css/uploadDocsPage.css" />
@@ -12,7 +14,7 @@
         <p>Advanced artificial intelligence for comprehensive ESG assessment. Upload your documents and receive intelligent analysis across Environmental, Social, and Governance dimensions.</p>
     </div>
 
-    <form asp-controller="Home" asp-action="GenerateAnalysis" method="post" enctype="multipart/form-data" id="esg-form">
+    <form asp-area="Client" asp-controller="UploadDocs" asp-action="GenerateAnalysis" method="post" enctype="multipart/form-data" id="esg-form">
         <div class="esg-grid">
             <div class="esg-card">
                 <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" color="#2ecc71"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" opacity=".3"></path><path d="M17.73 4.27c-1.54-1.54-3.59-2.52-5.73-2.52s-4.19.98-5.73 2.52C4.98 5.81 4 7.86 4 10c0 2.14.98 4.19 2.52 5.73C7.81 17.02 9.86 18 12 18s4.19-.98 5.73-2.52C19.02 14.19 20 12.14 20 10c0-2.14-.98-4.19-2.27-5.73zM12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3.29-8.71L10 12.59l4.29-4.3 1.41 1.41L10 15.41 7.29 12.7l1.42-1.41z"></path></svg>
@@ -24,7 +26,7 @@
                         <span class="drop-zone-text">Drop environmental documents<br>or click to browse files</span>
                     </div>
                 </label>
-                <input type="file" asp-for="EnvironmentalFiles" id="environmental-files" class="file-input" multiple />
+                <input type="file" name="EnvironmentalFiles" id="environmental-files" class="file-input" multiple />
             </div>
 
             <div class="esg-card">
@@ -37,7 +39,7 @@
                         <span class="drop-zone-text">Drop social documents<br>or click to browse files</span>
                     </div>
                 </label>
-                <input type="file" asp-for="SocialFiles" id="social-files" class="file-input" multiple />
+                <input type="file" name="SocialFiles" id="social-files" class="file-input" multiple />
             </div>
 
             <div class="esg-card">
@@ -50,7 +52,7 @@
                         <span class="drop-zone-text">Drop governance documents<br>or click to browse files</span>
                     </div>
                 </label>
-                <input type="file" asp-for="GovernanceFiles" id="governance-files" class="file-input" multiple />
+                <input type="file" name="GovernanceFiles" id="governance-files" class="file-input" multiple />
             </div>
         </div>
 
@@ -65,20 +67,49 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM loaded. Initializing file input script.");
+
             const form = document.getElementById('esg-form');
             const clearButton = document.getElementById('clear-all-btn');
+            const originalPrompts = new Map();
 
-            const setupDropZone = (dropZoneId, fileInputId) => {
-                const dropZone = document.getElementById(dropZoneId);
-                const fileInput = document.getElementById(fileInputId);
-                const dropZonePrompt = dropZone.querySelector('.drop-zone-prompt');
+            // This function is correct and does not need to be changed.
+            const updateDropZoneDisplay = (dropZone, fileInput) => {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    dropZone.innerHTML = '';
+                    const fileList = document.createElement('div');
+                    fileList.className = 'file-list';
+                    const fileCount = fileInput.files.length;
+                    const fileText = `<strong>${fileCount} file${fileCount > 1 ? 's' : ''} selected:</strong>`;
+                    const fileNames = Array.from(fileInput.files).map(f => f.name).join('<br>');
+                    fileList.innerHTML = `${fileText}<br><small style="word-break: break-all;">${fileNames}</small>`;
+                    dropZone.appendChild(fileList);
+                } else {
+                    if (originalPrompts.has(dropZone.id)) {
+                        dropZone.innerHTML = originalPrompts.get(dropZone.id);
+                    }
+                }
+            };
 
-                // Clicking the drop zone opens the file browser
-                dropZone.addEventListener('click', () => {
-                    fileInput.click();
+            // 💡 We will now loop through the INPUTS directly.
+            document.querySelectorAll('.file-input').forEach(fileInput => {
+                console.log("Attaching listeners to:", fileInput.id);
+
+                // Find the associated LABEL (the drop zone) using its 'for' attribute.
+                const dropZone = document.querySelector(`label[for="${fileInput.id}"]`);
+                if (!dropZone) return;
+
+                // Store the original state of the drop zone.
+                originalPrompts.set(dropZone.id, dropZone.innerHTML);
+
+                // ✅ Attach the listener DIRECTLY to the file input.
+                // This is the most reliable way to catch the change.
+                fileInput.addEventListener('change', function() {
+                    console.log("File Input changed");
+                    updateDropZoneDisplay(dropZone, fileInput);
                 });
 
-                // Add drag-and-drop event listeners
+                // Drag-and-drop listeners are attached to the drop zone.
                 dropZone.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     dropZone.classList.add('dragover');
@@ -91,76 +122,22 @@
                 dropZone.addEventListener('drop', (e) => {
                     e.preventDefault();
                     dropZone.classList.remove('dragover');
-                    // Assign dropped files to the file input
                     if (e.dataTransfer.files.length) {
                         fileInput.files = e.dataTransfer.files;
-                        updateDropZoneDisplay(dropZone, fileInput, dropZonePrompt);
+                        // Manually dispatch the event to trigger the listener above.
+                        fileInput.dispatchEvent(new Event('change', { 'bubbles': true }));
                     }
                 });
+            });
 
-                // Update display when files are selected via browse
-                fileInput.addEventListener('change', () => {
-                    updateDropZoneDisplay(dropZone, fileInput, dropZonePrompt);
-                });
-            };
-
-            const updateDropZoneDisplay = (dropZone, fileInput, originalPrompt) => {
-                // Clear previous content
-                while (dropZone.firstChild) {
-                    dropZone.removeChild(dropZone.firstChild);
-                }
-
-                if (fileInput.files.length > 0) {
-                    const fileList = document.createElement('div');
-                    fileList.className = 'file-list';
-
-                    let fileText = `${fileInput.files.length} file${fileInput.files.length > 1 ? 's' : ''} selected:`;
-                    const fileNames = Array.from(fileInput.files).map(f => f.name).join(', ');
-
-                    fileList.innerHTML = `<strong>${fileText}</strong><br>${fileNames}`;
-                    dropZone.appendChild(fileList);
-                } else {
-                    // Restore original prompt
-                    dropZone.appendChild(originalPrompt);
-                }
-            };
-
-            // Initialize all three drop zones
-            setupDropZone('environmental-drop-zone', 'environmental-files');
-            setupDropZone('social-drop-zone', 'social-files');
-            setupDropZone('governance-drop-zone', 'governance-files');
-
-            // Clear All button functionality
+            // "Clear All Files" button functionality.
             clearButton.addEventListener('click', () => {
-                form.reset(); // This clears the file inputs
-
-                // Manually reset the display for all drop zones
-                document.querySelectorAll('.drop-zone').forEach(dz => {
-                     const inputId = dz.getAttribute('for');
-                     const input = document.getElementById(inputId);
-                     const prompt = dz.querySelector('.drop-zone-prompt') || // This covers cases where it was removed
-                                    document.getElementById(dz.id).querySelector('.drop-zone-prompt');
-                     // This is a bit of a hacky way to restore; better would be to clone the original state
-                     const originalContent = `
-                        <div class="drop-zone-prompt">
-                            <svg class="drop-zone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"></path></svg>
-                            <span class="drop-zone-text">${dz.querySelector('.drop-zone-text').innerHTML}</span>
-                        </div>`;
-
-                    // Simplified reset
-                     const originalPrompt = dz.querySelector('.drop-zone-prompt');
-                     if(!dz.contains(originalPrompt)) {
-                         // Find the initial prompt text and reconstruct
-                         let defaultText = '';
-                         if(dz.id.includes('environmental')) defaultText = 'Drop environmental documents<br>or click to browse files';
-                         if(dz.id.includes('social')) defaultText = 'Drop social documents<br>or click to browse files';
-                         if(dz.id.includes('governance')) defaultText = 'Drop governance documents<br>or click to browse files';
-
-                         dz.innerHTML = `<div class="drop-zone-prompt">
-                            <svg class="drop-zone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"></path></svg>
-                            <span class="drop-zone-text">${defaultText}</span>
-                        </div>`;
-                     }
+                form.reset();
+                document.querySelectorAll('.file-input').forEach(fileInput => {
+                    const dropZone = document.querySelector(`label[for="${fileInput.id}"]`);
+                    if (dropZone) {
+                        updateDropZoneDisplay(dropZone, fileInput);
+                    }
                 });
             });
         });
