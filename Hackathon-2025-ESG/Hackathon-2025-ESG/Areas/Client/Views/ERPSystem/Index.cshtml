@@ -1,0 +1,410 @@
+﻿@model Hackathon_2025_ESG.Areas.Client.Controllers.ERPSystemViewModel
+@{
+    ViewData["Title"] = "ERP Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="text-center mb-4">ERP Dashboard</h1>
+    <hr class="my-4" />
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Companies (@Model.Companies.Count())</h2>
+            <div>
+                <a asp-controller="ERPSystem" asp-action="Create" asp-route-entityType="company" class="btn btn-primary">Add Company</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseCompanies" role="button"
+                    aria-expanded="false" aria-controls="collapseCompanies">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseCompanies">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Company ID</th>
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>Industry</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int companyCounter = 1; }
+                    @foreach (var company in Model.Companies)
+                    {
+                        <tr>
+                            <td>@companyCounter</td>
+                            <td>@company.CompanyId</td>
+                            <td>@company.Name</td>
+                            <td>@company.Country</td>
+                            <td>@company.Industry</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="company" asp-route-id="@company.CompanyId"
+                                        class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="company" asp-route-id="@company.CompanyId"
+                                        class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        companyCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Departments (@Model.Departments.Count())</h2>
+            <div>
+                <a asp-action="Create" asp-route-entityType="department" class="btn btn-primary">Add Department</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseDepartments" role="button"
+                    aria-expanded="false" aria-controls="collapseDepartments">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseDepartments">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Department ID</th>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int deptCounter = 1; }
+                    @foreach (var dept in Model.Departments)
+                    {
+                        <tr>
+                            <td>@deptCounter</td>
+                            <td>@dept.DepartmentId</td>
+                            <td>@dept.Name</td>
+                            <td>@dept.CompanyId</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="department" asp-route-id="@dept.DepartmentId"
+                                        class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="department" asp-route-id="@dept.DepartmentId"
+                                        class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        deptCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Employees (@Model.Employees.Count())</h2>
+            <div>
+                <a asp-action="Create" asp-route-entityType="employee" class="btn btn-primary">Add Employee</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseEmployees" role="button"
+                    aria-expanded="false" aria-controls="collapseEmployees">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseEmployees">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int empCounter = 1; }
+                    @foreach (var emp in Model.Employees)
+                    {
+                        <tr>
+                            <td>@empCounter</td>
+                            <td>@emp.EmployeeId</td>
+                            <td>@emp.Name</td>
+                            <td>@emp.Position</td>
+                            <td>@emp.DepartmentId</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="employee" asp-route-id="@emp.EmployeeId"
+                                        class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="employee" asp-route-id="@emp.EmployeeId"
+                                        class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        empCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Vendors (@Model.Vendors.Count())</h2>
+            <div>
+                <a asp-action="Create" asp-route-entityType="vendor" class="btn btn-primary">Add Vendor</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseVendors" role="button"
+                    aria-expanded="false" aria-controls="collapseVendors">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseVendors">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Vendor ID</th>
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>ESG Rating</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int vendorCounter = 1; }
+                    @foreach (var vendor in Model.Vendors)
+                    {
+                        <tr>
+                            <td>@vendorCounter</td>
+                            <td>@vendor.VendorId</td>
+                            <td>@vendor.Name</td>
+                            <td>@vendor.Country</td>
+                            <td>@vendor.ESGRating</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="vendor" asp-route-id="@vendor.VendorId"
+                                        class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="vendor" asp-route-id="@vendor.VendorId"
+                                        class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        vendorCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+    
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Products (@Model.Products.Count())</h2>
+            <div>
+                <a asp-action="Create" asp-route-entityType="product" class="btn btn-primary">Add Product</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseProducts" role="button"
+                    aria-expanded="false" aria-controls="collapseProducts">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseProducts">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Product ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Carbon Footprint</th>
+                        <th>Water Usage</th>
+                        <th>Vendor</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int productCounter = 1; }
+                    @foreach (var product in Model.Products)
+                    {
+                        <tr>
+                            <td>@productCounter</td>
+                            <td>@product.ProductId</td>
+                            <td>@product.Name</td>
+                            <td>@product.Category</td>
+                            <td>@product.CarbonFootprint</td>
+                            <td>@product.WaterUsage</td>
+                            <td>@product.VendorId</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="product" asp-route-id="@product.ProductId" class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="product" asp-route-id="@product.ProductId" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        productCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Orders (@Model.Orders.Count())</h2>
+            <div>
+                <a asp-action="Create" asp-route-entityType="order" class="btn btn-primary">Add Order</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseOrders" role="button"
+                    aria-expanded="false" aria-controls="collapseOrders">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseOrders">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Order ID</th>
+                        <th>Company</th>
+                        <th>Order Date</th>
+                        <th>Total Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int orderCounter = 1; }
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>@orderCounter</td>
+                            <td>@order.OrderId</td>
+                            <td>@order.CompanyId</td>
+                            <td>@order.OrderDate.ToShortDateString()</td>
+                            <td>@order.TotalAmount.ToString("C")</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="order" asp-route-id="@order.OrderId" class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="order" asp-route-id="@order.OrderId" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        orderCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Environmental Metrics (@Model.EnvironmentalMetrics.Count())</h2>
+            <div>
+                <a asp-action="Create" asp-route-entityType="environmentalmetric" class="btn btn-primary">Add Metric</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseMetrics" role="button"
+                    aria-expanded="false" aria-controls="collapseMetrics">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseMetrics">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Metric ID</th>
+                        <th>Company</th>
+                        <th>Date</th>
+                        <th>Energy Usage (kWh)</th>
+                        <th>Water Usage (L)</th>
+                        <th>Waste Generated (kg)</th>
+                        <th>Emissions (kg CO2)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int metricCounter = 1; }
+                    @foreach (var metric in Model.EnvironmentalMetrics)
+                    {
+                        <tr>
+                            <td>@metricCounter</td>
+                            <td>@metric.MetricId</td>
+                            <td>@metric.CompanyId</td>
+                            <td>@metric.MetricDate.ToShortDateString()</td>
+                            <td>@metric.EnergyUsage</td>
+                            <td>@metric.WaterUsage</td>
+                            <td>@metric.WasteGenerated</td>
+                            <td>@metric.Emissions</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="environmentalmetric" asp-route-id="@metric.MetricId" class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="environmentalmetric" asp-route-id="@metric.MetricId" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        metricCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Compliance Records (@Model.Compliances.Count())</h2>
+            <div>
+                <a asp-action="Create?entityType=compliance" asp-route-entityType="compliance" class="btn btn-primary">Add Record</a>
+                <a class="btn btn-secondary" data-toggle="collapse" href="#collapseMetrics" role="button"
+                    aria-expanded="false" aria-controls="collapseMetrics">Collapse</a>
+            </div>
+        </div>
+        <div class="collapse" id="collapseMetrics">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Compliance ID</th>
+                        <th>Company</th>
+                        <th>Name</th>
+                        <th>Certification Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int complianceCounter = 1; }
+                    @foreach (var compliance in Model.Compliances)
+                    {
+                        <tr>
+                            <td>@complianceCounter</td>
+                            <td>@compliance.ComplianceId</td>
+                            <td>@compliance.CompanyId</td>
+                            <td>@compliance.Name</td>
+                            <td>@compliance.CertificationDate.ToShortDateString()</td>
+                            <td>@compliance.ExpiryDate.ToShortDateString()</td>
+                            <td>@compliance.Status</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-action="Edit" asp-route-entityType="compliance" asp-route-id="@compliance.ComplianceId" class="btn btn-warning btn-sm mr-2">Edit</a>
+                                    <a asp-action="Delete" asp-route-entityType="compliance" asp-route-id="@compliance.ComplianceId" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        complianceCounter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

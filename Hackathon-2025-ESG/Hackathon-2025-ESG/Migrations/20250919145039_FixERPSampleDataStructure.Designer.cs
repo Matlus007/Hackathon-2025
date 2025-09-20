@@ -4,6 +4,7 @@ using Hackathon_2025_ESG.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hackathon_2025_ESG.Migrations
 {
     [DbContext(typeof(Hackathon_2025_ESGContext))]
-    partial class Hackathon_2025_ESGContextModelSnapshot : ModelSnapshot
+    [Migration("20250919145039_FixERPSampleDataStructure")]
+    partial class FixERPSampleDataStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,7 +127,7 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
@@ -139,6 +142,8 @@ namespace Hackathon_2025_ESG.Migrations
 
                     b.HasKey("ComplianceId");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Compliance");
                 });
 
@@ -149,13 +154,15 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DepartmentId");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("Department");
                 });
@@ -167,7 +174,7 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime2");
@@ -184,6 +191,8 @@ namespace Hackathon_2025_ESG.Migrations
 
                     b.HasKey("EmployeeId");
 
+                    b.HasIndex("DepartmentId");
+
                     b.ToTable("Employee");
                 });
 
@@ -194,7 +203,7 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Emissions")
                         .HasColumnType("decimal(18,2)");
@@ -213,6 +222,8 @@ namespace Hackathon_2025_ESG.Migrations
 
                     b.HasKey("MetricId");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("EnvironmentalMetric");
                 });
 
@@ -223,7 +234,7 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -232,6 +243,8 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderId");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("Order");
                 });
@@ -243,18 +256,22 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("OrderId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("OrderDetailId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderDetail");
                 });
@@ -275,13 +292,18 @@ namespace Hackathon_2025_ESG.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VendorId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("VendorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VendorId1")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("WaterUsage")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("VendorId1");
 
                     b.ToTable("Product");
                 });
@@ -509,6 +531,75 @@ namespace Hackathon_2025_ESG.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Compliance", b =>
+                {
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Company", "Company")
+                        .WithMany("Compliances")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Department", b =>
+                {
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Company", "Company")
+                        .WithMany("Departments")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Employee", b =>
+                {
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Department", "Department")
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId");
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.EnvironmentalMetric", b =>
+                {
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Company", "Company")
+                        .WithMany("EnvironmentalMetrics")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Order", b =>
+                {
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Company", "Company")
+                        .WithMany("Orders")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.OrderDetail", b =>
+                {
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId");
+
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Product", "Product")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Product", b =>
+                {
+                    b.HasOne("Hackathon_2025_ESG.Models.ERPSample.Vendor", "Vendor")
+                        .WithMany("Products")
+                        .HasForeignKey("VendorId1");
+
+                    b.Navigation("Vendor");
+                });
+
             modelBuilder.Entity("Hackathon_2025_ESG.Models.EsgRawDocs", b =>
                 {
                     b.HasOne("Hackathon_2025_ESG.Areas.Identity.Data.Hackathon_2025_ESGUser", "User")
@@ -580,6 +671,37 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Company", b =>
+                {
+                    b.Navigation("Compliances");
+
+                    b.Navigation("Departments");
+
+                    b.Navigation("EnvironmentalMetrics");
+
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Department", b =>
+                {
+                    b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Order", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Product", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Vendor", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,6 +4,7 @@ using Hackathon_2025_ESG.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hackathon_2025_ESG.Migrations
 {
     [DbContext(typeof(Hackathon_2025_ESGContext))]
-    partial class Hackathon_2025_ESGContextModelSnapshot : ModelSnapshot
+    [Migration("20250919140057_ERPSampleDataStructure")]
+    partial class ERPSampleDataStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,229 +88,6 @@ namespace Hackathon_2025_ESG.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Company", b =>
-                {
-                    b.Property<string>("CompanyId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Industry")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CompanyId");
-
-                    b.ToTable("Company");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Compliance", b =>
-                {
-                    b.Property<string>("ComplianceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CertificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ComplianceId");
-
-                    b.ToTable("Compliance");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Department", b =>
-                {
-                    b.Property<string>("DepartmentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DepartmentId");
-
-                    b.ToTable("Department");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Employee", b =>
-                {
-                    b.Property<string>("EmployeeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Position")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Salary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("EmployeeId");
-
-                    b.ToTable("Employee");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.EnvironmentalMetric", b =>
-                {
-                    b.Property<string>("MetricId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Emissions")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EnergyUsage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("MetricDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("WasteGenerated")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("WaterUsage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("MetricId");
-
-                    b.ToTable("EnvironmentalMetric");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Order", b =>
-                {
-                    b.Property<string>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("OrderId");
-
-                    b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.OrderDetail", b =>
-                {
-                    b.Property<string>("OrderDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("OrderId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderDetailId");
-
-                    b.ToTable("OrderDetail");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Product", b =>
-                {
-                    b.Property<string>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("CarbonFootprint")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Category")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VendorId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("WaterUsage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("ProductId");
-
-                    b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("Hackathon_2025_ESG.Models.ERPSample.Vendor", b =>
-                {
-                    b.Property<string>("VendorId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ESGRating")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("VendorId");
-
-                    b.ToTable("Vendor");
                 });
 
             modelBuilder.Entity("Hackathon_2025_ESG.Models.EsgRawDocs", b =>

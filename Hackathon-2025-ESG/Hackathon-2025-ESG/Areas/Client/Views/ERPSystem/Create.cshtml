@@ -1,0 +1,49 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "Create New " + ViewBag.EntityType;
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Create New @ViewBag.EntityType</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" asp-route-entityType="@ViewBag.EntityType" method="post">
+                        @foreach (var prop in Model.GetType().GetProperties())
+                        {
+                            @if (prop.Name.Contains("Id") || prop.Name == "CreatedAt" || prop.Name == "UpdatedAt")
+                            {
+                                continue; // Skip ID and timestamp fields
+                            }
+                            <div class="form-group">
+                                <label for="@prop.Name">@prop.Name</label>
+                                <input type="text" name="@prop.Name" id="@prop.Name" class="form-control" />
+                            </div>
+                        }
+
+                        <hr class="mt-4" />
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-2"></i> Save
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left mr-2"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
