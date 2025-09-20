@@ -1,0 +1,31 @@
+﻿@model Hackathon_2025_ESG.Areas.Client.Controllers.DynamicEditViewModel
+
+@{
+    ViewBag.Title = "Edit " + Model.EntityType;
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <h2>Edit @Model.EntityType</h2>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" name="EntityType" value="@Model.EntityType" />
+        <input type="hidden" name="Id" value="@Model.Id" />
+
+        <div class="form-group">
+            @foreach (var prop in Model.Properties)
+            {
+                <div class="mb-3">
+                    <label class="form-label">@prop.Key</label>
+                    <input type="text"
+                           name="Properties[@prop.Key]"
+                           value="@prop.Value"
+                           class="form-control"
+                           @(prop.Key.ToLower().Contains("id") ? "readonly" : "") />
+                </div>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

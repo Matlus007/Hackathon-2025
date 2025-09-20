@@ -29,6 +29,13 @@ builder.Services.AddScoped<IAwsS3UploaderService, AwsS3UploaderService>();
 
 var app = builder.Build();
 
+// seed database
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<Hackathon_2025_ESGContext>();
+    await DatabaseSeeder.SeedAsync(dbContext);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
