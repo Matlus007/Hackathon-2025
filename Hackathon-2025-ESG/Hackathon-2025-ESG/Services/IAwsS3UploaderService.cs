@@ -18,11 +18,6 @@ namespace Hackathon_2025_ESG.Services
 
         public async Task<bool> UploadFileAsync(string bucketName, string key, Stream fileStream, string contentType)
         {
-            //Console.WriteLine("bucketName: " + bucketName);
-            //Console.WriteLine("key: " + key);
-            //Console.WriteLine("contentType: " + contentType);
-            //Console.WriteLine("fileStream Length: " + fileStream);
-
             try
             {
                 var request = new PutObjectRequest
@@ -56,6 +51,51 @@ namespace Hackathon_2025_ESG.Services
             {
                 _logger.LogError(e, "Unknown error encountered when writing an object. Key: {Key}, Bucket: {BucketName}", key, bucketName);
                 return false;
+            }
+        }
+
+        public Task<string> GetTemporaryLinkAsync(string bucketName, string key)
+        {
+            try
+            {
+                var request = new GetPreSignedUrlRequest
+                {
+                    BucketName = bucketName,
+                    Key = key,
+                    Expires = DateTime.UtcNow.AddHours(1) // Link is valid for 1 hour
+                };
+
+                string url = _s3Client.GetPreSignedURL(request);
+                return Task.FromResult(url);
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogError(e, "Error generating pre-signed URL for key: {Key}", key);
+                return Task.FromResult("#"); // Return a dead link on error
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unknown error generating pre-signed URL for key: {Key}", key);
+                return Task.FromResult("#");
+            }
+        }
+
+        public async Task<long> GetObjectSizeAsync(string bucketName, string key)
+        {
+            try
+            {
+                var request = new GetObjectMetadataRequest
+                {
+                    BucketName = bucketName,
+                    Key = key
+                };
+                var response = await _s3Client.GetObjectMetadataAsync(request);
+                return response.Headers.ContentLength; // Returns the size in bytes
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogError(e, "Error getting metadata for key: {Key}. File may not exist.", key);
+                return 0; // Return 0 if file not found or on error
             }
         }
     }

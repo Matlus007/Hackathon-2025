@@ -1,7 +1,10 @@
 ﻿using Hackathon_2025_ESG.Areas.Client.Models;
 using Hackathon_2025_ESG.Controllers;
+using Hackathon_2025_ESG.Data;
+using Hackathon_2025_ESG.Models;
 using Hackathon_2025_ESG.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Packaging.Signing;
 using System.Security.Claims;
 
 namespace Hackathon_2025_ESG.Areas.Client.Controllers
@@ -13,15 +16,18 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         private readonly ILogger<UploadDocsController> _logger;
         private readonly IAwsS3UploaderService _s3Uploader;
         private readonly IConfiguration _configuration;
+        private readonly Hackathon_2025_ESGContext _context;
 
         public UploadDocsController(
             ILogger<UploadDocsController> logger,
             IAwsS3UploaderService s3Uploader,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            Hackathon_2025_ESGContext context)
         {
             _logger = logger;
             _s3Uploader = s3Uploader;
             _configuration = configuration;
+            _context = context;
         }
 
         [HttpGet]
@@ -80,6 +86,14 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
 
             _logger.LogInformation("User '{UserId}' successfully uploaded {SuccessCount} of {TotalFiles} files for report '{ReportTimestamp}'.", userId, totalSuccessCount, allFiles.Count(), reportTimestamp);
 
+            string AiReportFileName = reportTimestamp + "-AI-ESG-Report.pdf";
+            string AiReportS3Directory = $"{userId}/{reportTimestamp}/AI-Report";
+            string AiReportS3Key = $"{AiReportS3Directory}/{AiReportFileName}";
+
+            await SaveAiReportRecordAsync(userId, AiReportFileName, AiReportS3Key, AiReportS3Directory);
+
+            _logger.LogInformation("User '{UserId}' successfully uploaded {AiReportFileName} files for AI Report '{ReportTimestamp}'.", userId, AiReportFileName, reportTimestamp);
+
             if (totalSuccessCount == 0 && allFiles.Any())
             {
                 TempData["Error"] = "An error occurred, and none of your files could be uploaded. Please try again.";
@@ -101,6 +115,8 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
             int successCount = 0;
             _logger.LogInformation("Starting upload of {FileCount} files to '{CategoryFolder}' for user '{UserId}'.", files.Count, categoryFolder, userId);
 
+            string s3Directory = $"{userId}/{timestamp}/Raw-Docs/{categoryFolder}";
+
             foreach (var file in files)
             {
                 if (file == null || file.Length == 0) continue;
@@ -109,7 +125,7 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                 {
                     // Construct the full S3 key according to the required structure
                     // Example: user-id-123/2025-09-20-11-22-33/Raw-Docs/Environmental-Docs/guid-original-filename.pdf
-                    string s3Key = $"{userId}/{timestamp}/Raw-Docs/{categoryFolder}/{Guid.NewGuid()}-{file.FileName}";
+                    string s3Key = $"{s3Directory}/{Guid.NewGuid()}-{file.FileName}";
                     //string s3Key = $"{Guid.NewGuid()}-{file.FileName}";
 
                     using (var stream = file.OpenReadStream())
@@ -118,6 +134,8 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                         if (uploadSuccess)
                         {
                             successCount++;
+
+                            await SaveRawDocRecordAsync(userId, file, s3Key, s3Directory);
                         }
                         else
                         {
@@ -130,7 +148,58 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                     _logger.LogError(ex, "An exception occurred while uploading file '{FileName}' for user '{UserId}'.", file.FileName, userId);
                 }
             }
+
             return successCount;
+        }
+
+        private async Task SaveRawDocRecordAsync(string userId, IFormFile file, string s3Key, string s3Directory)
+        {
+            try
+            {
+                var newDocRecord = new EsgRawDocs
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserId = userId,
+                    FileName = file.FileName,
+                    S3DirectoryPath = s3Directory,
+                    S3FilePath = s3Key,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.EsgRawDoc.Add(newDocRecord);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully saved database record for file: {FileName}", file.FileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save database record for uploaded file: {FileName}", file.FileName);
+            }
+        }
+
+        private async Task SaveAiReportRecordAsync(string userId, string fileName, string s3Key, string s3Directory)
+        {
+            try
+            {
+                var newDocRecord = new EsgReport
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    UserId = userId,
+                    FileName = fileName,
+                    S3FilePath = s3Key,
+                    S3RawDocsDirectoryPath = s3Directory,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.EsgReport.Add(newDocRecord);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully saved database record for file: {FileName}", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save database record for uploaded file: {FileName}", fileName);
+            }
         }
     }
 }
