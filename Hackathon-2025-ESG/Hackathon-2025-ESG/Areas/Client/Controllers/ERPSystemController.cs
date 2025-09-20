@@ -81,7 +81,7 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                 EntityType = entityType,
                 Id = id,
                 Properties = entity.GetType().GetProperties()
-                    .ToDictionary(p => p.Name, p => p.GetValue(entity))
+                    .ToDictionary(p => p.Name, p => p.GetValue(entity)?.ToString() ?? string.Empty)
             };
 
             return View(model);
@@ -137,17 +137,6 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Delete(string entityType, string id)
-        {
-            ViewBag.EntityType = entityType;
-            object? model = await FindEntityById(entityType, id);
-            if (model == null)
-                return NotFound();
-
-            return View(model);
         }
 
         [HttpPost, ActionName("Delete")]
@@ -322,6 +311,6 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
     {
         public string EntityType { get; set; } = string.Empty;
         public string Id { get; set; } = string.Empty;
-        public Dictionary<string, object?> Properties { get; set; } = new();
+        public Dictionary<string, string> Properties { get; set; } = new();
     }
 }
