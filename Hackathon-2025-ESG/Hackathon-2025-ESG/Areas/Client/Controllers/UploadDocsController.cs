@@ -87,8 +87,8 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
             }
 
             // 4. --- Redirect to a results or processing page ---
-            // Pass the unique report identifier to the next page
-            return RedirectToAction("AnalysisInProgress", new { userId = userId, reportId = reportTimestamp });
+            //TempData["SuccessMessage"] = $"Successfully uploaded {totalSuccessCount} of {allFiles.Count()} files. Your analysis will begin shortly.";
+            return RedirectToAction("Index");
         }
 
         private async Task<int> UploadCategoryFilesAsync(List<IFormFile> files, string bucketName, string userId, string timestamp, string categoryFolder)

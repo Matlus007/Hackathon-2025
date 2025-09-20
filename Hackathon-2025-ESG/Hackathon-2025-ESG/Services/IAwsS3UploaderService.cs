@@ -18,6 +18,11 @@ namespace Hackathon_2025_ESG.Services
 
         public async Task<bool> UploadFileAsync(string bucketName, string key, Stream fileStream, string contentType)
         {
+            //Console.WriteLine("bucketName: " + bucketName);
+            //Console.WriteLine("key: " + key);
+            //Console.WriteLine("contentType: " + contentType);
+            //Console.WriteLine("fileStream Length: " + fileStream);
+
             try
             {
                 var request = new PutObjectRequest
@@ -26,7 +31,7 @@ namespace Hackathon_2025_ESG.Services
                     Key = key,
                     InputStream = fileStream,
                     ContentType = contentType,
-                    CannedACL = S3CannedACL.PublicRead
+                    //CannedACL = S3CannedACL.PublicRead
                 };
 
                 var response = await _s3Client.PutObjectAsync(request);

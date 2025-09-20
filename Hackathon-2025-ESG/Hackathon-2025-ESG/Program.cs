@@ -19,7 +19,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
 
 // This loads the "AWS" section from appsettings.json
-//builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
 // Register the IAmazonS3 client
 builder.Services.AddAWSService<IAmazonS3>();
