@@ -1,0 +1,13 @@
+
+{
+    "region" : "ap-southeast-1",
+    "configuration" : "Debug",
+    "framework"     : "net9.0",
+    "self-contained" : false,
+    "application"    : "RocketBoi-ESG-Reporting",
+    "environment"    : "RocketBoi-ESG-Reporting-env",
+    "enable-xray"    : false,
+    "enhanced-health-type" : "basic",
+    "additional-options"   : "",
+    "proxy-server"         : "nginx"
+}
