@@ -13,6 +13,8 @@
 
 body {
     background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+    background-attachment: fixed;
+    min-height: 100vh;
     color: var(--primary-text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     display: flex;
@@ -122,9 +124,9 @@ body {
 }
 
 .drop-zone-icon {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 1rem;
+    width: 45px;
+    height: 45px;
+/*    margin-bottom: 1rem;*/
     opacity: 0.6;
 }
 
@@ -193,4 +195,37 @@ body {
     100% {
         transform: scale(1);
     }
+}
+
+.selected-standard-section {
+    background-color: rgba(255, 255, 255, 0.05); /* Subtle semi-transparent background */
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+    .selected-standard-section h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-text);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .selected-standard-section p {
+        color: var(--secondary-text);
+        margin: 0 0 1.5rem 0;
+    }
+
+.standard-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--secondary-text);
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 50px; /* Creates the "pill" shape */
+    border: 1px solid var(--border-color);
 }

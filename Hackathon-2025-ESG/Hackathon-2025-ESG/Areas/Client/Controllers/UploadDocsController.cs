@@ -31,9 +31,12 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string standard)
         {
             var model = new EsgAnalysisViewModel();
+
+            model.SelectedStandard = standard;
+
             return View(model);
         }
 
@@ -41,6 +44,7 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateAnalysis(EsgAnalysisViewModel model)
         {
+            Console.WriteLine("GenerateAnalysis called.");
             // 1. --- Initial Validation ---
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
@@ -58,9 +62,21 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                 ModelState.AddModelError("", "Please upload at least one document to generate an analysis.");
                 return View("Index", model); // Return to the upload view with an error
             }
+            Console.WriteLine("Got Files.");
 
             if (!ModelState.IsValid)
             {
+                // Find all validation errors in the ModelState
+                var validationErrors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
+
+                // Log the collected errors for debugging
+                _logger.LogWarning("Model validation failed. Errors: {@ValidationErrors}", validationErrors);
+
                 return View("Index", model);
             }
 
@@ -72,6 +88,7 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                 // In a real app, you'd show a user-friendly error page.
                 return StatusCode(500, "Server configuration error: The storage destination is not set up.");
             }
+            Console.WriteLine("Retrieved Bucket Name.");
 
             // Create a single, unique timestamp for this entire report submission
             var reportTimestamp = DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm-ss");
@@ -102,7 +119,7 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
 
             // 4. --- Redirect to a results or processing page ---
             //TempData["SuccessMessage"] = $"Successfully uploaded {totalSuccessCount} of {allFiles.Count()} files. Your analysis will begin shortly.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home", new { area = "Client" });
         }
 
         private async Task<int> UploadCategoryFilesAsync(List<IFormFile> files, string bucketName, string userId, string timestamp, string categoryFolder)
