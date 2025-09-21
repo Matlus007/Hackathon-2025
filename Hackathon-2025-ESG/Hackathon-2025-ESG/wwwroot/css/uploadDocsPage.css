@@ -1,25 +1,26 @@
-﻿
-:root {
-    --dark-bg: #0d0c1d;
-    --card-bg: rgba(22, 22, 44, 0.5);
-    --border-color: rgba(128, 128, 160, 0.3);
-    --primary-text: #e0e0e0;
-    --secondary-text: #a0a0b0;
-    --accent-purple: #8a2be2;
-    --accent-blue: #4a00e0;
-    --drop-zone-border: #4a4a6a;
+﻿:root {
+    --primary-bg: #4A47A3;
+    --secondary-bg: #706FD3;
+    --card-bg: #FFFFFF;
+    --primary-text: #FFFFFF;
+    --secondary-text: #D1D1E9;
+    --dark-text: #34495E;
+    --light-gray: #ECF0F1;
+    --border-color: #E0E0E0;
+    --drop-zone-border: #A5A3E0; /* A light purple for the drop zone */
+    --accent-color: #FFFFFF; /* Using white as the main accent */
 }
 
 body {
-    background-color: var(--dark-bg);
+    background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
     color: var(--primary-text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     display: flex;
-/*    justify-content: center;*/
-/*    align-items: center;*/
+    /*    justify-content: center;*/
+    /*    align-items: center;*/
     min-height: 100vh;
     margin: 0;
-/*    padding: 2rem;*/
+    /*    padding: 2rem;*/
 }
 
 .container {
@@ -34,9 +35,11 @@ body {
 
     .header-section .icon {
         font-size: 2.5rem;
+        color: #FFC300;
         background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        margin-top: 1rem;
         margin-bottom: 1rem;
         animation: pulse 2s infinite;
     }
@@ -62,15 +65,15 @@ body {
 }
 
 .esg-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background-color: var(--card-bg); /* Now solid white */
+    color: var(--dark-text); /* Dark text for contrast */
+    border: none; /* Remove the old border */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); /* Add a subtle shadow */
     border-radius: 16px;
     padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
     .esg-card .card-icon {
@@ -81,19 +84,21 @@ body {
     }
 
     .esg-card h3 {
+        color: var(--dark-text);
         font-size: 1.5rem;
         margin-bottom: 0.5rem;
     }
 
     .esg-card p {
-        color: var(--secondary-text);
+        color: #7F8C8D;
         font-size: 0.9rem;
         min-height: 40px; /* Ensures alignment */
         margin-bottom: 1.5rem;
     }
 
 .drop-zone {
-    border: 2px dashed var(--drop-zone-border);
+    border: 2px dashed var(--drop-zone-border); 
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 2rem;
     width: 100%;
@@ -112,7 +117,7 @@ body {
     }
 
 .drop-zone-text {
-    color: var(--secondary-text);
+    color: var(--dark-text);
     pointer-events: none; /* Allows click to pass through to the input */
 }
 
@@ -130,7 +135,7 @@ body {
 .file-list {
     margin-top: 1rem;
     font-size: 0.8rem;
-    color: var(--secondary-text);
+    color: var(--dark-text);
     word-break: break-all;
 }
 
@@ -152,18 +157,18 @@ body {
 }
 
 .btn-clear {
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--primary-text);
+    background-color: rgba(255, 255, 255, 0.2); /* Same as home page Refresh button */
+    color: var(--primary-text); /* White text */
+    border: none;
 }
 
     .btn-clear:hover {
-        background-color: var(--border-color);
+        background-color: rgba(255, 255, 255, 0.3);
     }
 
 .btn-generate {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-    color: white;
+    background-color: var(--accent-color); /* White background */
+    color: var(--primary-bg); /* Purple text */
 }
 
     .btn-generate:hover {
