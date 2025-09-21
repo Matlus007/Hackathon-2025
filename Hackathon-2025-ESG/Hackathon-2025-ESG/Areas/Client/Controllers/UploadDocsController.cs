@@ -1,4 +1,6 @@
 ﻿using Amazon;
+using Amazon.BedrockRuntime;
+using Amazon.BedrockRuntime.Model;
 using Hackathon_2025_ESG.Areas.Client.Models;
 using Hackathon_2025_ESG.Controllers;
 using Hackathon_2025_ESG.Data;
@@ -8,6 +10,8 @@ using Hackathon_2025_ESG.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging.Signing;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 
 namespace Hackathon_2025_ESG.Areas.Client.Controllers
 {
@@ -19,20 +23,21 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         private readonly IAwsS3UploaderService _s3Uploader;
         private readonly IConfiguration _configuration;
         private readonly Hackathon_2025_ESGContext _context;
-        private readonly BedrockClientWrapper _bedrockClient;
+        private readonly IBedrockService _bedrock;
 
         public UploadDocsController(
             ILogger<UploadDocsController> logger,
             IAwsS3UploaderService s3Uploader,
             IConfiguration configuration,
             Hackathon_2025_ESGContext context,
-            BedrockClientWrapper bedrockClient)
+            IBedrockService bedrock)
         {
             _logger = logger;
             _s3Uploader = s3Uploader;
             _configuration = configuration;
             _context = context;
-            _bedrockClient = bedrockClient;
+            _bedrock = bedrock;
+
         }
 
         [HttpGet]
@@ -50,6 +55,7 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         public async Task<IActionResult> GenerateAnalysis(EsgAnalysisViewModel model)
         {
             Console.WriteLine("GenerateAnalysis called.");
+
             // 1. --- Initial Validation ---
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
@@ -228,7 +234,7 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         {
             try
             {
-                var prompt = _bedrockClient.BuildBedRockPayload(
+                var prompt = BedrockPayloadBuilder.BuildReportPayload(
                     "Sample Company",
                     "{}",
                     "{}",
@@ -236,13 +242,47 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                     "2023"
                 );
                 _logger.LogError("Prompt: {Prompt}", prompt);
-                var response = await _bedrockClient.InvokeBedrockModelAsync(prompt.Substring(0, Math.Min(500, prompt.Length)));
-                _logger.LogError("Response: {Response}", response);
+
+
+                var response = await _bedrock.InvokeAsync(prompt);
+                _logger.LogInformation("Bedrock Response: {response}", response);
+
+                // process the response to become pdf report
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error accessing Bedrock service.");
             }
         }
+
+        // private async Task GenerateAndUploadPdfAsync(EsgReportResponse reportData, string bucketName, string s3Key)
+        // {
+        //     try
+        //     {
+        //         // 1. Generate PDF
+        //         var document = new EsgReportPdfDocument(reportData);
+
+        //         using var pdfStream = new MemoryStream();
+        //         document.GeneratePdf(pdfStream);
+
+        //         // Reset stream position before uploading
+        //         pdfStream.Position = 0;
+
+        //         // 2. Upload to S3
+        //         var uploadSuccess = await _s3Uploader.UploadFileAsync(bucketName, s3Key, pdfStream, "application/pdf");
+        //         if (!uploadSuccess)
+        //         {
+        //             _logger.LogError("Failed to upload generated ESG PDF to S3. Key: {S3Key}", s3Key);
+        //             throw new Exception("PDF upload failed.");
+        //         }
+
+        //         _logger.LogInformation("Successfully uploaded ESG report PDF to S3. Key: {S3Key}", s3Key);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error generating or uploading ESG report PDF.");
+        //         throw;
+        //     }
+        // }
     }
 }
