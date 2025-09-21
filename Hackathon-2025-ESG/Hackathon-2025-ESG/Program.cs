@@ -1,3 +1,4 @@
+using Amazon.BedrockRuntime;
 using Amazon.S3;
 using Hackathon_2025_ESG.Areas.Identity.Data;
 using Hackathon_2025_ESG.Data;
@@ -23,6 +24,10 @@ builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
 // Register the IAmazonS3 client
 builder.Services.AddAWSService<IAmazonS3>();
+
+// Register the Bedrock client wrapper
+builder.Services.AddSingleton<IAmazonBedrockRuntime>(_ => new AmazonBedrockRuntimeClient(Amazon.RegionEndpoint.USEast1));
+builder.Services.AddSingleton<BedrockClientWrapper>();
 
 // Register custom uploader service
 builder.Services.AddScoped<IAwsS3UploaderService, AwsS3UploaderService>();

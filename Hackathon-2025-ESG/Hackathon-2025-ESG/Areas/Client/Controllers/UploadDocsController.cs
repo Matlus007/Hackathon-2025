@@ -1,7 +1,9 @@
-﻿using Hackathon_2025_ESG.Areas.Client.Models;
+﻿using Amazon;
+using Hackathon_2025_ESG.Areas.Client.Models;
 using Hackathon_2025_ESG.Controllers;
 using Hackathon_2025_ESG.Data;
 using Hackathon_2025_ESG.Models;
+using Hackathon_2025_ESG.Services;
 using Hackathon_2025_ESG.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Packaging.Signing;
@@ -17,17 +19,20 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         private readonly IAwsS3UploaderService _s3Uploader;
         private readonly IConfiguration _configuration;
         private readonly Hackathon_2025_ESGContext _context;
+        private readonly BedrockClientWrapper _bedrockClient;
 
         public UploadDocsController(
             ILogger<UploadDocsController> logger,
             IAwsS3UploaderService s3Uploader,
             IConfiguration configuration,
-            Hackathon_2025_ESGContext context)
+            Hackathon_2025_ESGContext context,
+            BedrockClientWrapper bedrockClient)
         {
             _logger = logger;
             _s3Uploader = s3Uploader;
             _configuration = configuration;
             _context = context;
+            _bedrockClient = bedrockClient;
         }
 
         [HttpGet]
@@ -41,6 +46,8 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateAnalysis(EsgAnalysisViewModel model)
         {
+            AccessBedrock();
+            return RedirectToAction(nameof(Index));
             // 1. --- Initial Validation ---
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
@@ -199,6 +206,27 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to save database record for uploaded file: {FileName}", fileName);
+            }
+        }
+
+        private async Task AccessBedrock()
+        {
+            try
+            {
+                var prompt = _bedrockClient.BuildBedRockPayload(
+                    "Sample Company",
+                    "{}",
+                    "{}",
+                    new List<(string file, string excerpt)> { ("doc1.pdf", "Excerpt from document 1"), ("doc2.pdf", "Excerpt from document 2") },
+                    "2023"
+                );
+                _logger.LogError("Prompt: {Prompt}", prompt);
+                var response = await _bedrockClient.InvokeBedrockModelAsync(prompt.Substring(0, Math.Min(500, prompt.Length)));
+                _logger.LogError("Response: {Response}", response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error accessing Bedrock service.");
             }
         }
     }
