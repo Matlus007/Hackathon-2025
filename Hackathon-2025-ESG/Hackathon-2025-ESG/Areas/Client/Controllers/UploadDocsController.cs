@@ -128,6 +128,8 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                 return View("Index", model);
             }
 
+
+
             // 4. --- Redirect to a results or processing page ---
             //TempData["SuccessMessage"] = $"Successfully uploaded {totalSuccessCount} of {allFiles.Count()} files. Your analysis will begin shortly.";
             return RedirectToAction("Index", "Home", new { area = "Client" });
@@ -176,6 +178,8 @@ namespace Hackathon_2025_ESG.Areas.Client.Controllers
                     _logger.LogError(ex, "An exception occurred while uploading file '{FileName}' for user '{UserId}'.", file.FileName, userId);
                 }
             }
+
+
 
             return successCount;
         }
