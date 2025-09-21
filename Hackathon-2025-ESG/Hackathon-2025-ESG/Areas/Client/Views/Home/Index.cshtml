@@ -65,8 +65,10 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                 Download
                             </a>
-                            <button class="btn-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                            <button class="btn-icon btn-view"
+                                    data-url="@report.DownloadUrl"
+                                    data-filename="@report.FileName">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             </button>
                         </div>
                     </div>
@@ -74,4 +76,62 @@
             }
         </div>
     </main>
+
+    <div id="preview-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Document Preview</h2>
+                <button id="modal-close-btn" class="btn-icon">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="modal-iframe" src="" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all the necessary modal elements
+            const modalOverlay = document.getElementById('preview-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalIframe = document.getElementById('modal-iframe');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+
+            // Get all the "View" buttons
+            const viewButtons = document.querySelectorAll('.btn-view');
+
+            // Function to open the modal
+            const openModal = (url, filename) => {
+                modalTitle.textContent = filename;
+                modalIframe.src = url;
+                modalOverlay.style.display = 'flex';
+            };
+
+            // Function to close the modal
+            const closeModal = () => {
+                modalOverlay.style.display = 'none';
+                modalIframe.src = ''; // Clear the iframe to stop content from loading
+            };
+
+            // Add a click event listener to each view button
+            viewButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const url = button.dataset.url;
+                    const filename = button.dataset.filename;
+                    openModal(url, filename);
+                });
+            });
+
+            // Add click event listeners to close the modal
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                // Only close if the user clicks on the overlay itself, not the content
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+}
